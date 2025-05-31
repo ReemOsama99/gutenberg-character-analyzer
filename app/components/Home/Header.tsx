@@ -40,4 +40,4 @@ export function Header() {
       </motion.div>
     </motion.header>
   );
-}
+} 
