@@ -45,13 +45,11 @@ export default function Home() {
 
   // Define messages for the loading indicator
   const loadingMessages = [
-    "Fetching book data from Project Gutenberg...",
-    "Sending text to AI for analysis...",
-    "AI is reading and understanding the story...",
-    "Identifying main characters and their roles...",
-    "Mapping out relationships and connections...",
-    "Analyzing key themes and plot points...",
-    "Almost there, just a few more moments..."
+    "Here we go...",
+    "Hold on, we're almost done...",
+    "Wait a bit...",
+    "A few more seconds...",
+    "Almost there..."
   ];
 
   const fetchBook = async () => {

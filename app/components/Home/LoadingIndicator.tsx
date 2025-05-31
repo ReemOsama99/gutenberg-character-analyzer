@@ -67,7 +67,7 @@ export function LoadingIndicator({ isLoading, messages }: LoadingIndicatorProps)
             <h3 className="text-xl font-semibold text-slate-800 dark:text-slate-100 mb-3">
               Analyzing Book...
             </h3>
-            <p className="text-slate-600 dark:text-slate-300 mb-5 text-sm text-center min-h-[3em]">
+            <p className="text-slate-600 dark:text-slate-300 mb-5 text-sm text-center min-h-[3em] italic">
               {messages[currentMessageIndex] || "Processing..."}
             </p>
             <div className="w-full max-w-md bg-slate-200 dark:bg-slate-700 rounded-full h-2.5 overflow-hidden">

@@ -20,20 +20,20 @@ export function AnalysisDisplay({ analysisResult }: AnalysisDisplayProps) {
       
       {analysisResult.analysis && (
         <div className="mb-8">
-          <h4 className="font-semibold text-slate-700 dark:text-slate-300 mb-2 text-xl">Themes & Setting</h4>
+          <h4 className="font-semibold text-slate-700 dark:text-slate-300 mb-3 text-xl">Themes & Setting</h4>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="bg-slate-50 dark:bg-slate-900/40 p-4 rounded-lg backdrop-blur-sm border border-slate-200 dark:border-slate-700">
-              <h5 className="font-medium text-slate-700 dark:text-slate-300 mb-2">Themes</h5>
+              <h5 className="font-bold text-lg text-slate-700 dark:text-slate-300 mb-2">Themes</h5>
               <ul className="list-disc pl-5 text-slate-800 dark:text-slate-200">
                 {analysisResult.analysis.themes.map((theme, i) => (
-                  <li key={i}>{theme}</li>
+                  <li key={i} className="mb-1">{theme}</li>
                 ))}
               </ul>
             </div>
             <div className="bg-slate-50 dark:bg-slate-900/40 p-4 rounded-lg backdrop-blur-sm border border-slate-200 dark:border-slate-700">
-              <h5 className="font-medium text-slate-700 dark:text-slate-300 mb-2">Setting</h5>
-              <p className="text-slate-800 dark:text-slate-200">{analysisResult.analysis.setting}</p>
-              <h5 className="font-medium text-slate-700 dark:text-slate-300 mt-4 mb-2">Timeframe</h5>
+              <h5 className="font-bold text-lg text-slate-700 dark:text-slate-300 mb-2">Setting</h5>
+              <p className="text-slate-800 dark:text-slate-200 mb-3">{analysisResult.analysis.setting}</p>
+              <h5 className="font-bold text-lg text-slate-700 dark:text-slate-300 mt-4 mb-2">Timeframe</h5>
               <p className="text-slate-800 dark:text-slate-200">{analysisResult.analysis.timeframe}</p>
             </div>
           </div>
