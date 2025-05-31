@@ -36,3 +36,9 @@ export interface BookAnalysis {
   setting: string;
   timeframe: string;
 }
+
+export interface Book {
+  text: string;
+  metadata: BookMetadata;
+  analysisResult: AnalysisResult;
+}
