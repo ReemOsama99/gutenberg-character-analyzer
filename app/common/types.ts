@@ -42,3 +42,19 @@ export interface Book {
   metadata: BookMetadata;
   analysisResult: AnalysisResult;
 }
+
+// Define custom node data type for ReactFlow
+export interface NodeData {
+  label: string;
+  description?: string;
+  color: string;
+  role?: string;
+  traits?: string[];
+}
+
+// Define custom edge data type for ReactFlow
+export interface EdgeData {
+  description: string;
+  significance: number;
+  type: "family" | "friend" | "rival" | "romance" | "ally";
+}
