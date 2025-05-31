@@ -11,7 +11,9 @@ import ReactFlow, {
   useEdgesState,
   Node,
   Edge,
-  MarkerType
+  MarkerType,
+  Handle,
+  Position
 } from 'reactflow';
 import 'reactflow/dist/style.css';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -20,7 +22,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 const CharacterNode = ({ data }: { data: NodeData }) => {
   return (
     <motion.div
-      className="px-4 py-2 rounded-md shadow-lg border-2 font-medium text-center"
+      className="px-4 py-2 rounded-md shadow-lg border-2 font-medium text-center relative"
       style={{ 
         background: data.color, 
         borderColor: `${data.color}66`, 
@@ -35,10 +37,22 @@ const CharacterNode = ({ data }: { data: NodeData }) => {
       animate={{ scale: 1, opacity: 1 }}
       transition={{ type: "spring", damping: 10 }}
     >
+      <Handle 
+        type="target" 
+        position={Position.Top} 
+        id="target"
+        style={{ background: '#555', width: '10px', height: '10px' }} 
+      />
       <div className="font-bold">{data.label}</div>
       {data.role && (
         <div className="text-xs opacity-80 mt-1">{data.role}</div>
       )}
+      <Handle 
+        type="source" 
+        position={Position.Bottom}
+        id="source"
+        style={{ background: '#555', width: '10px', height: '10px' }}
+      />
     </motion.div>
   );
 };
