@@ -11,7 +11,6 @@ export interface AnalysisResult {
   analysis: BookAnalysis;
   characters: Character[];
   relationships: Relationship[];
-  rawOutput?: string; // Keep for debugging purposes
 }
 
 export interface Character {

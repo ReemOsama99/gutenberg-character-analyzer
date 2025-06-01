@@ -30,6 +30,7 @@ export async function analyzeText(text: string, metadata: BookMetadata): Promise
     const resultText = response.data.choices[0].message.content;
     let rawParsedData: any;
 
+    //Make sure the response is valid JSON
     try {
       const jsonMatch = resultText.match(/\{[\s\S]*\}/);
       const jsonString = jsonMatch ? jsonMatch[0] : resultText;
@@ -38,9 +39,6 @@ export async function analyzeText(text: string, metadata: BookMetadata): Promise
       console.error("Failed to parse LLM JSON response:", parseError, "Raw response:", resultText);
       throw new Error("Failed to interpret the analysis from the AI. The response was not valid JSON.");
     }
-
-    // Add raw output for debugging before sanitization
-    rawParsedData.rawOutput = resultText;
 
     return sanitizeAnalysisResult(rawParsedData);
 
@@ -141,8 +139,7 @@ function sanitizeAnalysisResult(parsedData: any): AnalysisResult {
       timeframe: parsedData.analysis?.timeframe || ""
     },
     characters,
-    relationships,
-    rawOutput: parsedData.rawOutput || ""
+    relationships
   };
 }
 //#endregion
