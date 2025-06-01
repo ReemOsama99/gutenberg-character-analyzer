@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { fetchBook } from '@/app/lib/fetchBook';
-import { analyzeText } from '@/app/lib/analyzeText';
+import { fetchBookText } from '@/app/services/textService';
+import { fetchMetadata } from '@/app/services/metadataService';
+import { analyzeText } from '@/app/services/textAnalysisService';
 
 export async function GET(req: NextRequest) {
   // Extract bookId from query parameter
@@ -15,9 +16,13 @@ export async function GET(req: NextRequest) {
   }
 
   try {
-    const { text, metadata } = await fetchBook(bookId);
+    // Fetch text and metadata in parallel
+    const [text, metadata] = await Promise.all([
+      fetchBookText(bookId),
+      fetchMetadata(bookId)
+    ]);
+
     const analysisResult = await analyzeText(text, metadata);
-    console.log("Analysis completed successfully");
 
     return NextResponse.json({
       success: true,
@@ -25,9 +30,10 @@ export async function GET(req: NextRequest) {
       analysisResult
     });
   } catch (error) {
-    console.error('Error in analyze-book API:', error);
+    // Ensure error is an instance of Error for consistent message handling
+    const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred during analysis.';
     return NextResponse.json(
-      { success: false, error: error instanceof Error ? error.message : 'Unknown error' },
+      { success: false, error: errorMessage },
       { status: 500 }
     );
   }

@@ -1,13 +1,57 @@
 import axios from 'axios';
-import { BookMetadata, AnalysisResult } from '../common/types';
+import { BookMetadata, AnalysisResult, Character, Relationship } from '../common/types';
 
 const SAMBANOVA_API_URL = 'https://api.sambanova.ai/v1/chat/completions';
 const API_KEY = process.env.SAMBANOVA_API_KEY || '';
 const MODEL = 'Llama-4-Maverick-17B-128E-Instruct';
 
+// Internal helper to sanitize and structure the LLM response
+function _sanitizeAnalysisResult(parsedData: any): AnalysisResult {
+  // Ensure characters array exists and elements have IDs
+  const characters: Character[] = (parsedData.characters || []).map((character: any) => ({
+    ...character,
+    id: character.id || (character.name ? character.name.replace(/\s+/g, '') : `char_${Math.random().toString(36).substr(2, 9)}`),
+    traits: character.traits || [], // Ensure traits is always an array
+    description: character.description || "",
+    role: character.role || "Unknown"
+  }));
+
+  const characterIdMap = new Map<string, string>();
+  characters.forEach(character => {
+    if (character.name) characterIdMap.set(character.name, character.id);
+  });
+
+  // Ensure relationships array exists and uses proper IDs
+  const relationships: Relationship[] = (parsedData.relationships || []).map((relationship: any) => {
+    const sourceId = characterIdMap.get(relationship.source) || relationship.source;
+    const targetId = characterIdMap.get(relationship.target) || relationship.target;
+    return {
+      ...relationship,
+      id: relationship.id || `rel_${sourceId}_${targetId}`,
+      source: sourceId,
+      target: targetId,
+      type: relationship.type || "ally", // Provide a default type if missing
+      description: relationship.description || "",
+      significance: relationship.significance || 0
+    };
+  });
+
+  return {
+    summary: parsedData.summary || "",
+    analysis: {
+      themes: parsedData.analysis?.themes || [],
+      setting: parsedData.analysis?.setting || "",
+      timeframe: parsedData.analysis?.timeframe || ""
+    },
+    characters,
+    relationships,
+    rawOutput: parsedData.rawOutput || ""
+  };
+}
+
 export async function analyzeText(text: string, metadata: BookMetadata): Promise<AnalysisResult> {
   try {
-    const prompt = getPrompt(metadata, text);
+    const prompt = getPrompt(text, metadata);
 
     const response = await axios.post(
       SAMBANOVA_API_URL,
@@ -27,54 +71,33 @@ export async function analyzeText(text: string, metadata: BookMetadata): Promise
     );
 
     const resultText = response.data.choices[0].message.content;
-    console.log(resultText.toString());
+    let rawParsedData: any;
 
     try {
-      // Extract JSON from the response (in case there's any text around it)
       const jsonMatch = resultText.match(/\{[\s\S]*\}/);
       const jsonString = jsonMatch ? jsonMatch[0] : resultText;
-      const parsedData = JSON.parse(jsonString) as AnalysisResult;
-
-      // Add raw output for debugging
-      parsedData.rawOutput = resultText;
-
-      // Ensure all characters have IDs
-      parsedData.characters = parsedData.characters.map(character => ({
-        ...character,
-        id: character.id || character.name.replace(/\s+/g, '')
-      }));
-
-      // Ensure relationships use proper IDs
-      const characterIdMap = new Map<string, string>();
-      parsedData.characters.forEach(character => {
-        characterIdMap.set(character.name, character.id);
-      });
-
-      parsedData.relationships = parsedData.relationships.map(relationship => {
-        // Check if source/target are names rather than IDs
-        const sourceId = characterIdMap.get(relationship.source) || relationship.source;
-        const targetId = characterIdMap.get(relationship.target) || relationship.target;
-
-        return {
-          ...relationship,
-          id: relationship.id || `rel_${sourceId}_${targetId}`,
-          source: sourceId,
-          target: targetId
-        };
-      });
-
-      return parsedData;
+      rawParsedData = JSON.parse(jsonString);
     } catch (parseError) {
-      console.error("Failed to parse JSON response:", parseError);
-      throw new Error("Failed to parse LLM response as JSON");
+      console.error("Failed to parse LLM JSON response:", parseError, "Raw response:", resultText);
+      throw new Error("Failed to interpret the analysis from the AI. The response was not valid JSON.");
     }
+
+    // Add raw output for debugging before sanitization
+    rawParsedData.rawOutput = resultText;
+
+    return _sanitizeAnalysisResult(rawParsedData);
+
   } catch (error) {
-    console.error('Error analyzing text:', error);
-    throw new Error('Failed to analyze book text');
+    if (axios.isAxiosError(error)) {
+      console.error('Error calling Sambanova API:', error.response?.data || error.message);
+      throw new Error(`Failed to analyze book text due to an API error: ${error.message}`);
+    }
+    console.error('Unexpected error analyzing text:', error);
+    throw new Error('An unexpected error occurred while analyzing the book text.');
   }
 }
 
-function getPrompt(metadata: BookMetadata, text: string): string {
+function getPrompt(text: string, metadata: BookMetadata): string {
   return `Analyze the following book and respond with a JSON object structured EXACTLY as follows. Do not include any explanatory text outside the JSON structure:
 
 {
