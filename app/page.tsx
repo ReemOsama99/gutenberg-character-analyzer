@@ -62,16 +62,16 @@ export default function Home() {
               {bookData.analysisResult && (
                 <>
                   <AnalysisDisplay analysisResult={bookData.analysisResult} />
+                  <CharacterList 
+                    characters={bookData.analysisResult.characters} 
+                    nodeColors={nodeColors}
+                  />
                   <CharacterNetworkGraph 
                     nodes={nodes}
                     edges={edges}
                     onNodesChange={onNodesChange}
                     onEdgesChange={onEdgesChange}
                     edgeTypesConfig={edgeTypesConfig}
-                  />
-                  <CharacterList 
-                    characters={bookData.analysisResult.characters} 
-                    nodeColors={nodeColors}
                   />
                 </>
               )}
