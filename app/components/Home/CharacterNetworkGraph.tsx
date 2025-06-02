@@ -91,14 +91,10 @@ export function CharacterNetworkGraph({
             onEdgesChange={onEdgesChange}
             nodeTypes={nodeTypes}
             fitView
+            proOptions={{ hideAttribution: true }}
           >
             <Background color="#ffffff20" gap={16} />
             <Controls className="bg-white/10 backdrop-blur-sm border-white/20" />
-            <MiniMap 
-              nodeColor={(node) => (node.data as NodeData).color}
-              maskColor="rgba(0, 0, 0, 0.2)"
-              className="bg-white/10 backdrop-blur-sm border-white/20"
-            />
           </ReactFlow>
         ) : (
           <div className="flex items-center justify-center h-full">
