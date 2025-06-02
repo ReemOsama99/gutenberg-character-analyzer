@@ -14,6 +14,15 @@ A web application designed to analyze and visualize character relationships and 
 - **Responsive Design:** Adapts to various screen sizes for a seamless experience on desktop and mobile.
 - **Dark Mode Support:** Theme adapts based on user's system preference.
 
+## How to Use
+
+1.  Once the application is running, you will see an input field.
+2.  Enter a valid Project Gutenberg Book ID (e.g., `11` for "Alice's Adventures in Wonderland").
+3.  Click the "Analyze Book" button.
+4.  Wait for the analysis to complete. You will see loading indicators during this process.
+5.  Once loaded, the book metadata, character list (with flippable cards), and the character relationship graph will be displayed.
+6.  Interact with the graph by dragging nodes, panning, and zooming. Flip character cards to see more details.
+
 ## Tech Stack
 
 - **Frontend:** [Next.js](https://nextjs.org/) (React Framework)
@@ -67,12 +76,3 @@ bun dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-## How to Use
-
-1.  Once the application is running, you will see an input field.
-2.  Enter a valid Project Gutenberg Book ID (e.g., `11` for "Alice's Adventures in Wonderland").
-3.  Click the "Analyze Book" button.
-4.  Wait for the analysis to complete. You will see loading indicators during this process.
-5.  Once loaded, the book metadata, character list (with flippable cards), and the character relationship graph will be displayed.
-6.  Interact with the graph by dragging nodes, panning, and zooming. Flip character cards to see more details.
