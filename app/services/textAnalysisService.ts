@@ -28,7 +28,7 @@ export async function analyzeText(text: string, metadata: BookMetadata): Promise
     );
 
     const resultText = response.data.choices[0].message.content;
-    let rawParsedData: any;
+    let rawParsedData: RawAnalysisData;
 
     //Make sure the response is valid JSON
     try {
@@ -100,15 +100,47 @@ Book text: ${text.substring(0, MAX_TEXT_LENGTH)}...`;
 //#endregion
 
 //#region Helpers
+
+// Define interfaces for the expected raw structure from the LLM
+interface RawCharacter {
+  id?: string;
+  name?: string;
+  description?: string;
+  role?: string;
+  traits?: string[];
+  // Add other fields if expected from LLM, even if optional
+}
+
+interface RawRelationship {
+  id?: string;
+  source?: string; // Initially, this might be a name
+  target?: string; // Initially, this might be a name
+  type?: string;
+  description?: string;
+  significance?: number;
+  // Add other fields if expected from LLM, even if optional
+}
+
+interface RawAnalysisData {
+  summary?: string;
+  analysis?: {
+    themes?: string[];
+    setting?: string;
+    timeframe?: string;
+  };
+  characters?: RawCharacter[];
+  relationships?: RawRelationship[];
+}
+
 // Internal helper to sanitize and structure the LLM response
-function sanitizeAnalysisResult(parsedData: any): AnalysisResult {
+function sanitizeAnalysisResult(parsedData: RawAnalysisData): AnalysisResult {
   // Ensure characters array exists and elements have IDs
-  const characters: Character[] = (parsedData.characters || []).map((character: any) => ({
-    ...character,
+  const characters: Character[] = (parsedData.characters || []).map((character: RawCharacter): Character => ({
     id: character.id || (character.name ? character.name.replace(/\s+/g, '') : `char_${Math.random().toString(36).substr(2, 9)}`),
-    traits: character.traits || [], // Ensure traits is always an array
+    name: character.name || "Unknown Character",
     description: character.description || "",
-    role: character.role || "Unknown"
+    role: character.role || "Unknown",
+    traits: character.traits || [],
   }));
 
   const characterIdMap = new Map<string, string>();
@@ -117,17 +149,29 @@ function sanitizeAnalysisResult(parsedData: any): AnalysisResult {
   });
 
   // Ensure relationships array exists and uses proper IDs
-  const relationships: Relationship[] = (parsedData.relationships || []).map((relationship: any) => {
-    const sourceId = characterIdMap.get(relationship.source) || relationship.source;
-    const targetId = characterIdMap.get(relationship.target) || relationship.target;
+  const relationships: Relationship[] = (parsedData.relationships || []).map((relationship: RawRelationship): Relationship => {
+    // Attempt to map names to IDs if raw source/target are names
+    // If already an ID (or mapping fails), use the original value
+    const rawSource = relationship.source || "";
+    const rawTarget = relationship.target || "";
+
+    const sourceId = characterIdMap.get(rawSource) || rawSource;
+    const targetId = characterIdMap.get(rawTarget) || rawTarget;
+
+    // Ensure the relationship type is one of the allowed values
+    let finalType: Relationship['type'] = "ally"; // Default to 'ally'
+    const allowedTypes: Relationship['type'][] = ["family", "friend", "romance", "rival", "ally"];
+    if (relationship.type && allowedTypes.includes(relationship.type as Relationship['type'])) {
+      finalType = relationship.type as Relationship['type'];
+    }
+
     return {
-      ...relationship,
-      id: relationship.id || `rel_${sourceId}_${targetId}`,
+      id: relationship.id || `rel_${sourceId}_${targetId}_${Math.random().toString(36).substr(2, 5)}`,
       source: sourceId,
       target: targetId,
-      type: relationship.type || "ally", // Provide a default type if missing
+      type: finalType, // Use the sanitized type
       description: relationship.description || "",
-      significance: relationship.significance || 0
+      significance: typeof relationship.significance === 'number' ? Math.max(0, Math.min(10, relationship.significance)) : 0,
     };
   });
 

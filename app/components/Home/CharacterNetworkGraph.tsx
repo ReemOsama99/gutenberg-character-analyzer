@@ -3,7 +3,6 @@
 import ReactFlow, { 
   Background, 
   Controls, 
-  MiniMap, 
   Node,
   Edge,
   Handle,
