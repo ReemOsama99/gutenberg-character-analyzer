@@ -10,16 +10,21 @@ export function Header() {
       transition={{ duration: 0.7 }}
     >
       <motion.div
+        className="text-center"
         initial={{ scale: 0.9 }}
         animate={{ scale: 1 }}
         transition={{ duration: 0.5, delay: 0.2 }}
       >
-        <h1 className="text-4xl font-bold mb-3 bg-gradient-to-r from-blue-600 via-sky-500 to-cyan-500 dark:from-blue-500 dark:via-sky-400 dark:to-cyan-400 text-transparent bg-clip-text">
-          Gutenberg Character Analyzer
-        </h1>
-        <div className="w-24 h-1 mx-auto bg-gradient-to-r from-blue-600 to-cyan-500 dark:from-blue-500 dark:to-cyan-400 rounded-full mb-4"></div>
-        <p className="text-slate-700 dark:text-slate-300 max-w-2xl mx-auto">
-          Explore character relationships in classic literature through interactive visualizations
+        <div className="inline-block mb-6">
+          <h1 className="text-6xl font-bold bg-gradient-to-r from-blue-600 via-sky-500 to-cyan-500 dark:from-blue-500 dark:via-sky-400 dark:to-cyan-400 text-transparent bg-clip-text pb-2">
+            Gutenberg Insights
+          </h1>
+          <div className="relative w-full h-1 mt-5">
+            <div className="absolute top-0 bottom-0 left-[-3rem] right-[-3rem] bg-gradient-to-r from-blue-600 via-sky-500 to-cyan-500 dark:from-blue-500 dark:to-cyan-400 rounded-full"></div>
+          </div>
+        </div>
+        <p className="text-lg text-slate-500 dark:text-slate-300 max-w-2xl mx-auto">
+          Journey through the social fabric of literary masterpieces with interactive visualizations.
         </p>
       </motion.div>
       <motion.div 

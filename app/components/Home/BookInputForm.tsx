@@ -24,7 +24,7 @@ export function BookInputForm({
           type="text"
           value={bookId}
           onChange={(e) => onBookIdChange(e.target.value)}
-          placeholder="Enter book ID (e.g. 1787 for 'Hamlet')"
+          placeholder="Enter book ID (e.g. 1787 for 'Hamlet by William Shakespeare')"
           className="flex-1 px-4 py-3 border border-slate-300 dark:border-slate-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white/90 dark:bg-slate-700/90 backdrop-blur-sm text-slate-800 dark:text-slate-200 placeholder-slate-400 dark:placeholder-slate-500"
         />
         <motion.button
