@@ -65,7 +65,7 @@ export function CharacterList({ characters, nodeColors }: CharacterListProps) {
               >
                 <h5 className="font-bold text-slate-800 dark:text-slate-200">{character.name}</h5>
                 <p className="text-sm text-slate-600 dark:text-slate-400 italic mb-2">{character.role}</p>
-                <p className="text-xs text-slate-700 dark:text-slate-300 mb-2 overflow-y-auto flex-grow">{character.description}</p>
+                <p className="text-xs text-slate-700 dark:text-slate-300 mb-2 overflow-y-auto flex-grow break-words min-h-0">{character.description}</p>
                 <div className="flex flex-wrap gap-1 mt-auto">
                   {character.traits.map((trait, i) => (
                     <span
