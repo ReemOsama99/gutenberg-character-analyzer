@@ -32,7 +32,6 @@ export async function GET(req: NextRequest) {
   if (cachedEntry) {
     // Check if cache entry has expired
     if (Date.now() - cachedEntry.timestamp < CACHE_TTL_MS) {
-      console.log(`Returning cached data for bookId: ${bookId}`);
       return NextResponse.json({
         success: true,
         metadata: cachedEntry.metadata,
@@ -46,7 +45,6 @@ export async function GET(req: NextRequest) {
   }
 
   try {
-    console.log(`Fetching and analyzing data for bookId: ${bookId} (not found in cache or expired)`);
     // Fetch text and metadata in parallel
     const [text, metadata] = await Promise.all([
       fetchBookText(bookId),
@@ -61,7 +59,6 @@ export async function GET(req: NextRequest) {
       analysisResult,
       timestamp: Date.now()
     });
-    console.log(`Data for bookId: ${bookId} stored in cache.`);
 
     return NextResponse.json({
       success: true,
